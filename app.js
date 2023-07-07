@@ -37,6 +37,8 @@ app.use(session({ secret: "my secret", resave: false, saveUninitialized: false, 
 //chỉ sử dụng được sau session thôi !
 app.use(csrfProtection);
 app.use(flash());
+
+// Vì ta có cái dòng này nên bất kì khi nào login vào thì ta đều gọi được req.user
 app.use((req, res, next) => {
     if (!req.session.user) {
         return next();

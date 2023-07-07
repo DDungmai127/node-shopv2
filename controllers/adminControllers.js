@@ -56,33 +56,36 @@ exports.postEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedImageUrl = req.body.imageUrl;
     const updateDesc = req.body.description;
-    Product.findOneAndUpdate(
-        { _id: id },
-        {
-            title: updatedTitle,
-            price: updatedPrice,
-            description: updateDesc,
-            imageUrl: updatedImageUrl,
-        },
-        { new: true }
-    )
-        /* Course - way 
-    Product.findById(id).then(product) => {
-        product.title= updatedTitle,
-        product.price = updatedPrice,
-        product.description = updateDesc,
-        product.price = updatedPrice
-        return product.save();
-    }
-    */
-        .then((result) => {
-            console.log("Updated product");
-            res.redirect("/admin/products");
+    // Product.findOneAndUpdate(
+    //     { _id: id },
+    //     {
+    //         title: updatedTitle,
+    //         price: updatedPrice,
+    //         description: updateDesc,
+    //         imageUrl: updatedImageUrl,
+    //     },
+    //     { new: true }
+    // )
+
+    Product.findById(id)
+        .then((product) => {
+            if (product.userId.toString() !== req.user._id.toString()) {
+                return res.redirect("/");
+            }
+            (product.title = updatedTitle),
+                (product.price = updatedPrice),
+                (product.description = updateDesc),
+                (product.price = updatedPrice);
+            return product.save().then((result) => {
+                console.log("Updated product");
+                res.redirect("/admin/products");
+            });
         })
+
         .catch((err) => console.log(err));
 };
 exports.getProducts = (req, res, next) => {
-    Product.find()
+    Product.find({ userId: req.user._id })
         // .select("title price -_id")
         // .populate("userId", "name")
         .then((products) => {
@@ -98,7 +101,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findOneAndRemove(prodId)
+    Product.deleteOne({ _id: prodId, userId: req.user._id })
 
         .then(() => {
             console.log("Destroyed Product");
