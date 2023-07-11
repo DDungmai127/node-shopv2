@@ -7,6 +7,7 @@ const User = require("./models/user");
 const session = require("express-session");
 const flash = require("connect-flash");
 const mongoDBStore = require("connect-mongodb-session")(session);
+const multer = require("multer");
 const app = express();
 
 // const { doubleCsrf } = require("csrf-csrf");
@@ -29,9 +30,32 @@ const store = new mongoDBStore({
     uri: MONGODB_URI,
     collection: "session",
 });
+
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "images");
+    },
+    filename: (req, file, cb) => {
+        cb(null, "12072003" + "-" + file.originalname);
+    },
+});
+
+const filter = (req, file, cb) => {
+    if (
+        file.mimetype === "image/png" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/jpeg"
+    ) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
 const csrfProtection = csrf();
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: fileStorage, fileFilter: filter }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(cookieParser("cookie-parser-secret"));
 app.use(session({ secret: "my secret", resave: false, saveUninitialized: false, store: store }));
 //chỉ sử dụng được sau session thôi !
