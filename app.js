@@ -89,18 +89,18 @@ app.use((req, res, next) => {
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
-app.use(errorController.get404);
-app.get("/500", errorController.get500);
+// app.use(errorController.get404);
+// app.get("/500", errorController.get500);
 
-app.use((error, req, res, next) => {
-    // res.status(errorr.httpStatusCode).render(....)
-    // avoid infinity loop if using redirect
-    res.status(500).render("500", {
-        pageTitle: "Error",
-        path: "/500",
-        isAuthenticated: req.session.isLoggedIn,
-    });
-});
+// app.use((error, req, res, next) => {
+//     // res.status(errorr.httpStatusCode).render(....)
+//     // avoid infinity loop if using redirect
+//     res.status(500).render("500", {
+//         pageTitle: "Error",
+//         path: "/500",
+//         isAuthenticated: req.session.isLoggedIn,
+//     });
+// });
 mongoose
     .connect(
         "mongodb+srv://dangdung:12072003@cluster0.mdrwvlf.mongodb.net/shop?retryWrites=true&w=majority"
