@@ -3,8 +3,7 @@ const brcypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 // const sendgridTransport = require("nodemailer-sendgrid-transport");
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
 // const transporter = nodemailer.createTransport(sendgridTransport, {
 //     auth: {
 //         api_key: "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",
@@ -16,8 +15,8 @@ var transport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
     auth: {
-        user: "361b2be2dd11e9",
-        pass: "0bcc9203f69ae6",
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
     },
 });
 exports.getLogin = (req, res, next) => {
